@@ -13,7 +13,7 @@ def uniform(n):
 # Update a uniform distribution p by an updating score, where hits are indices
 # of values matching an observation, pHit is the multiplier for hits and
 # pMiss if not a hit
-p=[0.2,0.2,0.2,0.2,0.2]
+p = [0.2,0.2,0.2,0.2,0.2]
 pHit = 0.6
 pMiss = 0.2
 hits = [1,2]
@@ -32,10 +32,10 @@ print(sum(p))
 world = ['green', 'red', 'red', 'green', 'green'] #state space characteristics
 measurements = ['red' , 'green']  #observed value
 
-def sense(p, Z):    #p = prior, Z = measurement, observation
+def sense(p, Z):    # p = prior, Z = measurement, observation
     q = []
     for i in range(len(p)):
-        hit = (Z == world[i]) #hits = 1, misses = 0
+        hit = (Z == world[i]) # hits = 1, misses = 0
         q.append(p[i] * (hit * pHit + (1 - hit) * pMiss))
     normalizer = sum(q)
     for i in range(len(q)):
