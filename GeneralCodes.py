@@ -1,5 +1,6 @@
 #Finalized code versions
 
+# Unit 1: Discrete space model
 def uniform(M):
     '''
     Create a uniform distribution over a matrix of arbitrary no. of rows and 
@@ -76,3 +77,22 @@ def move(p, motion):
             
     return q
 
+
+# Unit 2 Kalman Filters
+def f(mu, sigma2, x):
+    '''normal probability density'''
+    return 1 / sqrt(2.0 * pi * sigma2) * exp(-0.5 * (x - mu) ** 2 / sigma2)
+
+def update(mean1, var1, mean2, var2):
+    newMean = (var2*mean1 + var1*mean2) / (var1 + var2)
+    newVar = 1 / (1/var1 + 1/var2)
+    return [newMean, newVar]
+
+# predict next location given motion
+def predict(mean1, var1, mean2, var2):
+    #i.e mean2 = intended distance, var2 = error in motion
+    newMean = mean1 + mean2
+    newVar = var1 + var2
+    return [newMean, newVar]
+
+                                
