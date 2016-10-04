@@ -55,7 +55,8 @@ class matrix:
     def __sub__(self, other):
         # check if correct dimensions
         if self.dimx != other.dimx or self.dimy != other.dimy:
-            raise ValueError, "Matrices must be of equal dimensions to subtract"
+            raise (ValueError,
+                   "Matrices must be of equal dimensions to subtract")
         else:
             # subtract if correct dimensions
             res = matrix([[]])
@@ -88,16 +89,17 @@ class matrix:
                 res.value[j][i] = self.value[i][j]
         return res
     
-    # Thanks to Ernesto P. Adorio for use of Cholesky and CholeskyInverse functions
+    # Thanks to Ernesto P. Adorio for use of Cholesky and CholeskyInverse
+    # functions
     
-    def Cholesky(self, ztol=1.0e-5):
+    def Cholesky(self, ztol = 1.0e-5):
         # Computes the upper triangular Cholesky factorization of
         # a positive definite matrix.
         res = matrix([[]])
         res.zero(self.dimx, self.dimx)
         
         for i in range(self.dimx):
-            S = sum([(res.value[k][i])**2 for k in range(i)])
+            S = sum([(res.value[k][i]) ** 2 for k in range(i)])
             d = self.value[i][i] - S
             if abs(d) < ztol:
                 res.value[i][i] = 0.0
@@ -106,10 +108,11 @@ class matrix:
                     raise ValueError, "Matrix not positive-definite"
                 res.value[i][i] = sqrt(d)
             for j in range(i+1, self.dimx):
-                S = sum([res.value[k][i] * res.value[k][j] for k in range(self.dimx)])
+                S = sum([res.value[k][i] * res.value[k][j]
+                         for k in range(self.dimx)])
                 if abs(S) < ztol:
                     S = 0.0
-                res.value[i][j] = (self.value[i][j] - S)/res.value[i][i]
+                res.value[i][j] = (self.value[i][j] - S) / res.value[i][i]
         return res
     
     def CholeskyInverse(self):
@@ -121,11 +124,13 @@ class matrix:
         # Backward step for inverse.
         for j in reversed(range(self.dimx)):
             tjj = self.value[j][j]
-            S = sum([self.value[j][k]*res.value[j][k] for k in range(j+1, self.dimx)])
+            S = sum([self.value[j][k]*res.value[j][k]
+                     for k in range(j+1, self.dimx)])
             res.value[j][j] = 1.0/tjj**2 - S/tjj
             for i in reversed(range(j)):
-                res.value[j][i] = res.value[i][j] = -sum([self.value[i][k]*res.value[k][j] for
-                                                          k in range(i+1, self.dimx)])/self.value[i][i]
+                res.value[j][i] = res.value[i][j] = -sum(
+                    [self.value[i][k]*res.value[k][j]
+                     for k in range(i+1, self.dimx)]) / self.value[i][i]
         return res
     
     def inverse(self):
@@ -143,7 +148,6 @@ class matrix:
 
 def filter(x, P):
     for n in range(len(measurements)):
-        
         # measurement update
         z = matrix([[measurements[n]]])
         y = z - H * x
@@ -161,18 +165,20 @@ def filter(x, P):
         print 'P = '
         P.show()
 
+    return x, P
+
 
 
 ########################################
 
 measurements = [1, 2, 3, 4, 5, 6, 7, 8]
 
-x = matrix([[0.], [0.]]) # initial state (location and velocity)
+x = matrix([[0.], [0.]])               # initial state (location and velocity)
 P = matrix([[1000., 0.], [0., 1000.]]) # initial uncertainty
-u = matrix([[0.], [0.]]) # external motion
-F = matrix([[1., 1.], [0, 1.]]) # next state function
-H = matrix([[1., 0.]]) # measurement function
-R = matrix([[1.]]) # measurement uncertainty
-I = matrix([[1., 0.], [0., 1.]]) # identity matrix
+u = matrix([[0.], [0.]])               # external motion
+F = matrix([[1., 1.], [0, 1.]])        # next state function
+H = matrix([[1., 0.]])                 # measurement function
+R = matrix([[1.]])                     # measurement uncertainty
+I = matrix([[1., 0.], [0., 1.]])       # identity matrix
 
 filter(x, P)
