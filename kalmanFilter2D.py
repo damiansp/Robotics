@@ -163,7 +163,7 @@ def filter(x, P):
 
 ########################################
 
-print "### 4-dimensional example ###"
+print "### 2-dimensional example ###"
 
 measurements = [[5., 10.], [6., 8.], [7., 6.], [8., 4.], [9., 2.], [10., 0.]]
 initial_xy = [4., 12.]
@@ -176,7 +176,8 @@ initial_xy = [4., 12.]
 
 dt = 0.1
 
-x = matrix([[initial_xy[0]], [initial_xy[1]], [0.], [0.]]) # initial state (location and velocity)
+# initial state (location and velocity)
+x = matrix([[initial_xy[0]], [initial_xy[1]], [0.], [0.]]) 
 u = matrix([[0.], [0.], [0.], [0.]]) # external motion
 
 
@@ -186,15 +187,26 @@ u = matrix([[0.], [0.], [0.], [0.]]) # external motion
 #### fill this in, remember to use the matrix() function!: ####
 
 # initial uncertainty
-P =  matrix([[0., 0., 0., 0.], [0., 0., 0., 0.], [0., 0., 1000., 0.], [0., 0., 0., 1000.]])
+P = matrix([[0., 0., 0., 0.],     # 0 uncertainty in positions x...
+            [0., 0., 0., 0.],     # ...and y
+            [0., 0., 1000., 0.],  # high (1000) uncertainty in velocities x...
+            [0., 0., 0., 1000.]]) # ...and y
 # next state function
-F =  matrix([[1., 0., dt, 0.], [0., 1., 0., dt], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+F = matrix([[1., 0., dt, 0.],     # x' = x + dt(dx)
+            [0., 1., 0., dt],     # y' = y + dt(dy)
+            [0., 0., 1., 0.],     # dx' = dx (assume no change in velocity)
+            [0., 0., 0., 1.]])    # dy' = dy ( " " ")
 # measurement function
-H =  matrix([[1., 0., 0., 0.], [0., 1., 0., 0.]]) 
+H = matrix([[1., 0., 0., 0.],    # measurement values for x...
+            [0., 1., 0., 0.]])   # ...and y (none for velocities dx, dy)
 # measurement uncertainty
-R =  matrix([[0.1, 0.], [0., 0.1]])
+R = matrix([[0.1, 0.],
+            [0., 0.1]])
 # identity matrix
-I =  matrix([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])
+I = matrix([[1., 0., 0., 0.],
+            [0., 1., 0., 0.],
+            [0., 0., 1., 0.],
+            [0., 0., 0., 1.]])
 
 
 
