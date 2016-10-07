@@ -46,18 +46,22 @@ class robot:
     def sense(self):
         Z = []
         for i in range(len(landmarks)):
-            dist = sqrt((self.x - landmarks[i][0]) ** 2 + (self.y - landmarks[i][1]) ** 2)
+            dist = sqrt((self.x - landmarks[i][0]) ** 2 +
+                        (self.y - landmarks[i][1]) ** 2)
             dist += random.gauss(0.0, self.sense_noise)
             Z.append(dist)
         return Z
     
     
     def move(self, turn, forward):
+        # Turns first, then moves
         if forward < 0:
             raise ValueError, 'Robot cant move backwards'         
         
         # turn, and add randomness to the turning command
-        orientation = self.orientation + float(turn) + random.gauss(0.0, self.turn_noise)
+        orientation = (self.orientation +
+                       float(turn) +
+                       random.gauss(0.0, self.turn_noise))
         orientation %= 2 * pi
         
         # move, and add randomness to the motion command
@@ -75,8 +79,10 @@ class robot:
     
     def Gaussian(self, mu, sigma, x):
         
-        # calculates the probability of x for 1-dim Gaussian with mean mu and var. sigma
-        return exp(- ((mu - x) ** 2) / (sigma ** 2) / 2.0) / sqrt(2.0 * pi * (sigma ** 2))
+        # calculates the probability of x for 1-dim Gaussian with mean mu and
+        # var. sigma
+        return (exp(-((mu - x) ** 2) / (sigma ** 2) / 2.0) /
+                sqrt(2.0 * pi * (sigma ** 2)))
     
     
     def measurement_prob(self, measurement):
@@ -85,14 +91,16 @@ class robot:
         
         prob = 1.0;
         for i in range(len(landmarks)):
-            dist = sqrt((self.x - landmarks[i][0]) ** 2 + (self.y - landmarks[i][1]) ** 2)
+            dist = (sqrt((self.x - landmarks[i][0]) ** 2 +
+                         (self.y - landmarks[i][1]) ** 2))
             prob *= self.Gaussian(dist, self.sense_noise, measurement[i])
         return prob
     
     
     
     def __repr__(self):
-        return '[x=%.6s y=%.6s orient=%.6s]' % (str(self.x), str(self.y), str(self.orientation))
+        return ('[x=%.6s y=%.6s orient=%.6s]'
+                % (str(self.x), str(self.y), str(self.orientation)))
 
 
 
