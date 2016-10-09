@@ -1,5 +1,8 @@
 from robot import *
 from math import *
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 myrobot = robot()
 
@@ -39,7 +42,7 @@ print (myrobot.sense())
 
 # Use a particle filter-----------------------------------------------
 # Initialize 1000 particles
-N = 1000
+N = 5000
 p = []
 
 
@@ -64,3 +67,32 @@ for particle in range(N):
 w = []
 for particle in range(N):
     w.append(p[particle].measurement_prob(Z))
+
+# Resample weights according to probability
+# By hand:
+#p_new = []
+#index = int(random.uniform(0, N))
+#beta = 0
+
+#for i in range(N):
+#    beta += random.uniform(0, 2 * max(w))
+
+#    while w[index] < beta:
+#        beta -= w[index]
+#        index = (index + 1) % N
+
+#    p_new.append(p[index])
+
+#p = p_new
+
+# Using numpy:
+w = np.array(w)
+p = np.random.choice(p, len(p), replace = True, p = w / sum(w))
+
+print ('Robot:', myrobot.__repr__())
+# Verify visually
+x = [a.x for a in p]
+y = [a.y for a in p]
+
+plt.plot(x, y, 'bo', alpha = 0.02)
+plt.show()
