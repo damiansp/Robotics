@@ -96,7 +96,11 @@ for t in range(10):
     y = [a.y for a in p]
 
     plt.plot(x, y, 'bo', alpha = 0.02)
+    plt.xlim([0, 100])
+    plt.ylim([0, 100])
     plt.show()
 
-
+    # Error tracking
+    print ("Error:", eval(myrobot, p))
+    
 print p[:5]  # note orientations also converging
