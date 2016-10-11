@@ -104,3 +104,53 @@ for t in range(10):
     print ("Error:", eval(myrobot, p))
     
 print p[:5]  # note orientations also converging
+
+
+
+# Circular movement---------------------------------------------------
+# position of 4 landmarks
+landmarks  = [[0.0, 100.0], [0.0, 0.0], [100.0, 0.0], [100.0, 100.0]]
+# world is NOT cyclic. Robot is allowed to travel "out of bounds"
+world_size = 500.0
+max_steering_angle = pi/4
+
+# Test case 1:
+length = 20.
+bearing_noise  = 0.0
+steering_noise = 0.0
+distance_noise = 0.0
+
+myrobot = robot(length)
+myrobot.set(0.0, 0.0, 0.0)
+myrobot.set_noise(bearing_noise, steering_noise, distance_noise)
+
+motions = [[0.0, 10.0], [pi / 6.0, 10], [0.0, 20.0]]
+T = len(motions)
+
+print 'Robot:    ', myrobot
+for t in range(T):
+    myrobot = myrobot.move_circular(motions[t])
+    print 'Robot:    ', myrobot
+
+# Test Case 2:
+myrobot.set(0.0, 0.0, 0.0)
+motions = [[0.2, 10.] for row in range(15)]
+T = len(motions)
+
+# Track motion to plot
+xs = [myrobot.x]
+ys = [myrobot.y]
+
+
+
+print 'Robot:    ', myrobot
+for t in range(T):
+    myrobot = myrobot.move_circular(motions[t])
+    xs.append(myrobot.x)
+    ys.append(myrobot.y)
+    print 'Robot:    ', myrobot
+
+plt.plot(xs, ys, 'bo-')
+plt.xlim([0, 100])
+plt.ylim([0, 100])
+plt.show()
