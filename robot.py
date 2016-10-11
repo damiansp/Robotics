@@ -15,13 +15,14 @@ world_size = 100.0
 
 
 class robot:
-    def __init__(self):
-        self.x = random.random() * world_size
-        self.y = random.random() * world_size
-        self.orientation = random.random() * 2.0 * pi
-        self.forward_noise = 0.0;
-        self.turn_noise    = 0.0;
-        self.sense_noise   = 0.0;
+    def __init__(self, length = 10.0):
+        self.x = random.random() * world_size # initial x coord
+        self.y = random.random() * world_size # initial y coord
+        self.orientation = random.random() * 2.0 * pi # initial heading
+        self.length = length                          # length of robot
+        self.forward_noise = 0.0;                     # error terms
+        self.turn_noise    = 0.0;                     # ...
+        self.sense_noise   = 0.0;                     # ...
     
     def set(self, new_x, new_y, new_orientation):
         if new_x < 0 or new_x >= world_size:
