@@ -52,7 +52,7 @@ myrobot = robot()
 p = []
 for i in range(N):
     x = robot()
-    x.set_noise(0.05, 0.05, 5.0)
+    x.set_noise(0., 0., 0., 0.05, 0.05, 5.0)
     p.append(x)
 
 for t in range(10):
@@ -67,7 +67,7 @@ for t in range(10):
     # Set weights to each particle
     w = []
     for particle in range(N):
-        w.append(p[particle].measurement_prob(Z))
+        w.append(p[particle].measurement_prob1(Z))
 
     # Resample weights according to probability
     # Using my own code::
@@ -134,7 +134,7 @@ for t in range(T):
 
 # Test Case 2:
 myrobot.set(0.0, 0.0, 0.0)
-motions = [[0.2, 10.] for row in range(15)]
+motions = [[0.2, 10.] for row in range(30)]
 T = len(motions)
 
 # Track motion to plot
@@ -151,6 +151,6 @@ for t in range(T):
     print 'Robot:    ', myrobot
 
 plt.plot(xs, ys, 'bo-')
-plt.xlim([0, 100])
-plt.ylim([0, 100])
+plt.xlim([0, 200])
+plt.ylim([0, 200])
 plt.show()
