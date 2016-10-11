@@ -45,12 +45,33 @@ class robot:
     
     
     def sense(self):
+        '''
+        Return the distance to each of the landmarks
+        '''
         Z = []
         for i in range(len(landmarks)):
             dist = sqrt((self.x - landmarks[i][0]) ** 2 +
                         (self.y - landmarks[i][1]) ** 2)
             dist += random.gauss(0.0, self.sense_noise)
             Z.append(dist)
+        return Z
+
+    def sense_bearing(self, add_noise = 1):
+        '''
+        Unlike sense() above, this function returns the angle (in rad) between
+        the robot and each of the landmarks
+        '''
+        Z = []
+
+        for L in landmarks:
+            bearing = atan2(L[0] - self.y, L[1] - self.x) - self.orientation
+
+            if add_noise:
+                bearing += random.gauss(0.0, self.bearing_noise)
+
+            bearing %= (2.0 * pi)
+            Z.append(bearing)
+
         return Z
     
     
