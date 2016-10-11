@@ -101,7 +101,12 @@ class robot:
         # set particle
         res = robot()
         res.set(x, y, orientation)
-        res.set_noise(self.forward_noise, self.turn_noise, self.sense_noise)
+        res.set_noise(self.bearing_noise,
+                      self.steering_noise,
+                      self.distance_noise,
+                      self.forward_noise,
+                      self.turn_noise,
+                      self.sense_noise)
         return res
 
 
@@ -147,8 +152,13 @@ class robot:
 
         result = robot()
         result.set(x, y, theta)
-        result.set_noise(
-            self.bearing_noise, self.steering_noise, self.distance_noise)
+        result.set_noise(self.bearing_noise,
+                         self.steering_noise,
+                         self.distance_noise,
+                         self.forward_noise,
+                         self.turn_noise,
+                         self.sense_noise)
+        
         return result
             
     def Gaussian(self, mu, sigma, x):
