@@ -54,7 +54,7 @@ class robot:
     
     
     def move(self, turn, forward):
-        # Turns first, then moves
+        '''Turns (in place) first, then moves'''
         if forward < 0:
             raise ValueError, 'Robot cant move backwards'         
         
@@ -76,7 +76,48 @@ class robot:
         res.set(x, y, orientation)
         res.set_noise(self.forward_noise, self.turn_noise, self.sense_noise)
         return res
-    
+
+
+    def move_circular(self, motion, min_turn_threshold = 0.001):
+        ''' 
+        Unlike the move() function above, which is: 'rotate in place; move in
+        a straight line', this move assumes movement with the wheels fixed at
+        a given steering angle (alpha).
+
+        @params
+        motion: array: [steering_angle, distance]
+
+        @return: a robot object with new [x, y, heading]
+        '''
+        alpha, d = motion
+        # turning angle:
+        beta = (d / self.length) * tan(alpha)
+
+        # if |beta| < min_turn_threshold, treat as straight line motion
+        if abs(beta) >= min_turn_threshold:
+            R = d / beta # turn radius
+        else:
+            R = 0
+
+        # Center of turn radius
+        cx = self.x - R * sin(self.orientation)
+        cy = self.y + R * cos(self.orientation)
+
+        # Update robot (x, y)
+        if abs(beta) >= min_turn_threshold:
+            x = cx + R * sin(self.orientation + beta)
+            y = cy - R * cos(self.orientation + beta)
+        else:
+            x = self.x + d * cos(self.orientation)
+            y = self.y + d * sin(self.orientation)
+
+        # Update robot heading
+        theta = (self.orientation + beta) % (2 * pi)
+
+        result = robot()
+        result.set(x, y, theta)
+        return result
+            
     def Gaussian(self, mu, sigma, x):
         
         # calculates the probability of x for 1-dim Gaussian with mean mu and
