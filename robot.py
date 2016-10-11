@@ -1,10 +1,3 @@
-###########################
-#                         #
-#  Udacity's robot class  #
-#                         #
-###########################
-
-
 from math import *
 import random
 
@@ -26,9 +19,10 @@ class robot:
         self.bearing_noise  = 0.0
         self.steering_noise = 0.0
         self.distance_noise = 0.0
+        self.bounded = bounded
     
     def set(self, new_x, new_y, new_orientation):
-        if bounded:
+        if self.bounded:
             if new_x < 0 or new_x >= world_size:
                 raise ValueError, 'X coordinate out of bounds'
             if new_y < 0 or new_y >= world_size:
@@ -41,14 +35,13 @@ class robot:
     
     
     def set_noise(self,
-                  new_b_noise,
-                  new_sn_noise,
-                  new_d_noise,
-                  new_f_noise,
-                  new_t_noise,
-                  new_st_noise):
-        # makes it possible to change the noise parameters
-        # this is often useful in particle filters
+                  new_b_noise  = 0.0,
+                  new_st_noise = 0.0,
+                  new_d_noise  = 0.0,
+                  new_f_noise  = 0.0,
+                  new_t_noise  = 0.0,
+                  new_sn_noise = 0.0):
+
         self.forward_noise  = float(new_f_noise)
         self.turn_noise     = float(new_t_noise)
         self.sense_noise    = float(new_sn_noise)
@@ -126,7 +119,7 @@ class robot:
         alpha, d = motion
         # Add noise
         alpha += random.gauss(0., self.steering_noise)
-        d += random.gauss(0, self.distance_noise)
+        d += random.gauss(0., self.distance_noise)
         
         # turning angle:
         beta = (d / self.length) * tan(alpha)
@@ -154,6 +147,8 @@ class robot:
 
         result = robot()
         result.set(x, y, theta)
+        result.set_noise(
+            self.bearing_noise, self.steering_noise, self.distance_noise)
         return result
             
     def Gaussian(self, mu, sigma, x):
@@ -174,14 +169,14 @@ class robot:
     
     
     def measurement_prob(self, measurements):
-        predicted_measurements = self.sense(0)
+        predicted_measurements = self.sense_bearing(0)
 
         # compute errors
         error = 1.0
         for i in range(len(measurements)):
             error_bearing = abs(measurements[i] - predicted_measurements[i])
             error_bearing = (error_bearing + pi) % (2.0 * pi) - pi
-            errror *= (exp(-(error_bearing ** 2) / (self.bearing_noise **2) /
+            error *= (exp(-(error_bearing ** 2) / (self.bearing_noise ** 2) /
                            2.0) /
                        sqrt(2.0 * pi * (self.bearing_noise ** 2)))
 
