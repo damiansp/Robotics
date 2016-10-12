@@ -44,7 +44,7 @@ def generate_ground_truth(motions):
     T = len(motions)
 
     for t in range(T):
-        myrobot = myrobot.move(motions[t])
+        myrobot = myrobot.move_circular(motions[t])
         Z.append(myrobot.sense())
 
     print 'Robot:    ', myrobot
@@ -77,7 +77,7 @@ def check_output(final_robot, estimated_position):
                and error_orientation < tolerance_orientation)
     return correct
 
-def particle_filter(motions, measurements, N = 5000, plot = False):
+def particle_filter(motions, measurements, N = 500, plot = False):
     # Make particles
     p = []
     for i in range(N):
@@ -95,11 +95,28 @@ def particle_filter(motions, measurements, N = 5000, plot = False):
         w = []
         for particle in range(N):
             w.append(p[particle].measurement_prob(measurements[t]))
-            
-        # resampling
-        w = np.array(w)
-        p = np.random.choice(p, N, replace = True, p = w / sum(w))
 
+        # resampling
+        # this approach works with smallish particle sets, as N increases,
+        # it suffers from underflow
+        #w = np.array(w)
+        #w = w / sum(w)
+        #print w
+        #p = np.random.choice(p, N, replace = True, p = w)
+        p3 = []
+        index = int(random.random() * N)
+        beta = 0.0
+        mw = max(w)
+
+        for i in range(N):
+            beta += random.random() * 2.0 * mw
+            while beta > w[index]:
+                beta -= w[index]
+                index = (index + 1) % N
+            p3.append(p[index])
+
+        p = p3
+        
         if plot:
             x = [a.x for a in p]
             y = [a.y for a in p]
@@ -115,6 +132,7 @@ def particle_filter(motions, measurements, N = 5000, plot = False):
 
 
 # TEST CASES----------------------------------------------------------
+# Case 1
 motions = [[2. * pi / 10, 20.] for row in range(8)]
 measurements = [[4.746936, 3.859782, 3.045217, 2.045506],
                 [3.510067, 2.916300, 2.146394, 1.598332],
@@ -125,3 +143,17 @@ measurements = [[4.746936, 3.859782, 3.045217, 2.045506],
                 [0.194460, 5.660382, 4.761072, 2.471682],
                 [5.717342, 4.736780, 3.909599, 2.342536]]
 print particle_filter(motions, measurements, plot = True)
+
+
+
+# Case 2
+number_of_iterations = 6
+motions = [[2. * pi / 20, 12.] for row in range(number_of_iterations)]
+x = generate_ground_truth(motions)
+final_robot = x[0]
+measurements = x[1]
+estimated_position = particle_filter(motions, measurements, plot = True)
+print_measurements(measurements)
+print 'Ground truth:    ', final_robot
+print 'Particle filter: ', estimated_position
+print 'Code check:      ', check_output(final_robot, estimated_position)
