@@ -68,7 +68,7 @@ def search(grid, init, goal, cost):
                 # if not visited add to fringe
                 if not state_visited:
                     # add cost to state
-                    fringe += [[state[0] + 1] + possible_new_state]
+                    fringe += [[state[0] + cost] + possible_new_state]
 
         # add state to visited
         visited += [state]
