@@ -55,8 +55,41 @@ def axis_ang3(expc3):
     - omg_hat: A unit rotation axis
     - theta: Corresponding rotation angle
     '''
-    return (normailize(expc3), np.linalg.norm(expc3))
+    return (normalize(expc3), np.linalg.norm(expc3))
 
 
 def matrix_exp3(so3mat):
-    pass
+    '''Computes the matrix exponential of a matrix in so(3)
+    Params:
+    - so3mat: a 3x3 skew-symmetric matrix
+    Returns: the matrix exponential of so3mat
+    '''
+    omg_theta = so3_to_vec(so3mat)
+    if near_zero(np.linalg.norm(omg_theta)):
+        return np.eye(3)
+    theta = axis_ang3(omg_theta)[1]
+    omg_mat = so3mat / theta
+    return (
+        np.eye(3)
+        + np.sin(theta)*omg_mat
+        + (1 - np.cos(theta))*np.dot(omg_mat, omg_mat))
+
+
+def normalize(v):
+    '''Normalize a vector
+    Params
+    - v: vector
+    Returns: unit vector pointing in same direction as v
+    '''
+    return v / np.linalg.norm(v)
+
+
+
+if __name__ == '__main__':
+    se3mat = [
+        [0, 0,       0,      0],
+        [0, 0,      -1.5708, 2.3562],
+        [0, 1.5708,  0,      2.3562],
+        [0, 0,       0,      0]]
+    t = matrix_exp6(se3mat)
+    print(t)
